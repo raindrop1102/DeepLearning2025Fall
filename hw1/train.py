@@ -9,6 +9,9 @@ from tqdm import tqdm
 import matplotlib.pyplot as plt
 import model
 
+model = model.LetNet5()
+
+
 transform = transforms.Compose([
     transforms.Resize((32, 32)),
     transforms.ToTensor(),
@@ -24,7 +27,7 @@ test_dataset = datasets.MNIST(root="./data", train=False, download=True, transfo
 test_dataloader = DataLoader(test_dataset, batch_size=1, shuffle=False)
 
 
-optimer = optim.AdamW(model.modle.parameters(), lr=0.0001)
+optimer = optim.AdamW(model.parameters(), lr=0.0001)
 loss_fn = nn.CrossEntropyLoss()
 
 num_epochs = 5
@@ -37,11 +40,11 @@ for epoch in tqdm(range(num_epochs)):
     running_loss = 0.0
     correct = 0
     total = 0
-    model.modle.train()
+    model.train()
 
     for data, labels in train_dataloader:
 
-        outputs = model.modle(data)
+        outputs = model(data)
         loss = loss_fn(outputs, labels)
 
         optimer.zero_grad()
@@ -62,10 +65,10 @@ for epoch in tqdm(range(num_epochs)):
     
     correct = 0
     total = 0
-    model.modle.eval()
+    model.eval()
     with torch.no_grad():
         for data, labels in test_dataloader:
-            outputs = model.modle(data)
+            outputs = model(data)
             _, predited = torch.max(outputs, 1)
             total += labels.size(0)
             correct += (predited == labels).sum().item()
@@ -90,13 +93,3 @@ plt.show()
 #     plt.title(f"Label:{label[0].item()}")
 #     plt.axis("off")
 #     plt.show()
-
-
-
-
-
-
-
-
-
-
